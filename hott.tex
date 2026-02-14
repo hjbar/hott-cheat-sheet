@@ -2,12 +2,292 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
-\usepackage{amsfonts,amssymb}
+\usepackage{amsfonts,amssymb,amsmath}
+\usepackage{bm}
 \usepackage{geometry}
+\geometry{hmargin=0.5cm,vmargin=0.5cm}
+\setlength{\parindent}{0em}
 
 \begin{document}
+
 \begin{center}
-  \Large HoTT cheat sheet
+  \Large HoTT cheat sheet (a first attempt, to be improved)
 \end{center}
+
+\subsection*{Dependent types}
+
+$\mathcal{U}$ is the type of all types (the type of \textbf{propositions}). The elements of $\mathcal{U}$ are \textbf{spaces}.
+
+A function $f: A \to \mathcal{U}$ is a \textbf{type family} (Can be seen as a coutinuous family of spaces).
+
+Let $A$ a type and $B: A \to \mathcal{U}$ a type family. \textbf{Dependent functions}: $\sqcap (x:A).B(x)$. It can also be written as $(x:A) \to B(x)$.
+
+A dependent sum is a $\bm{\Sigma}$\textbf{-type}: $\Sigma(x:A).B(x)$. It can also be written as $(x:A) \times B(x)$. A such construction forms a \textbf{total space}.
+
+\subsection*{Identity types}
+
+A type $t = u$ of proofs that $t$ is the same as $u$ (equalities/identities/paths) such that $- = - : (A : \mathcal{U}) \to A \to A \to \mathcal{U}$.
+
+A constructor $\textit{refl } : (x : A) \to x = x$.
+
+An eliminator $J : (A : \mathcal{U}) \to (x : A) \to (P : (y : A) \to x = u \to \mathcal{U}) \to P \, x \, (\textit{refl } x) \to (y : A) \to (p : x = y) \to P \, y \, p$
+
+A computation $J \, A \, x \, P \, r \, x \, (\textit{refl } x) \, \hat{=} \, r$.
+
+We interpret, a type $A$ as a \textbf{space}, a term $t : A$ as a \textbf{point} of $A$, a \textbf{path} $p$ in a space $A$ as a continuous map $p : I \to A$ with $I = [0,1]$, the points $p(0)$ and $p(1)$ are its \textit{source} and \textit{target}.
+
+Given points $x,y:A$ and paths $p,q: x=y$, we can consider the type $p=q$ whose points are \textbf{homotopies} between $p$ and $q$, i.e. continuous deformations form $p$ to $q$, i.e. maps $\alpha : I \to I \to A$ with $\alpha \, 0 \, \hat{=} \, p$ and $\alpha \, 1 \, \hat{=} \, q$ and $\alpha \, t \, 0 \, \hat{=} \, x$ and $\alpha \, t \, 1 \, \hat{=} \, y$.
+
+\subsection*{Operations on identity types}
+
+Symmetry: $p^-(t) \, \hat{=} \, p(1 - t)$, defined as $sym : (x : A) \to (y : A) \to (x = y) \to (y = x)$ is the function $x \mapsto J \, A \, x \, (\lambda y \, p. \, y = x) \textit{ refl}$.
+
+Transitivity: $p \cdot q$, defined as $trans : (x \, y \, z : A) \to (x = y) \to (y = z) \to (x = z)$ is the function $\textit{refl } \textit{refl } \mapsto \textit{refl}$.
+
+We also have that: $p \cdot \textit{refl } \hat{=} \, p$ and $\textit{refl} \cdot p \, \hat{=} \, p$ and $\textit{refl} \cdot \textit{refl } \hat{=} \textit{ refl}$ and $(p \cdot q) \cdot r = p \cdot (q \cdot r)$ and $p \cdot p^- = \textit{refl}$ and $p^- \cdot p = \textit{refl}$ and $(p \cdot q)^- = q^- \cdot p^-$ and $(p^-)^- = p$.
+
+Dependent congruence: $\textit{apd / cong} : \{A : \mathcal{U}\} \, \{B : A \to \mathcal{U}\} \to (f : (x : A) \to B \, x) \to \{x \, y : A\} \to (p : x = y) \to (f \, x = f \, y)$.
+
+Subsitutivity: $\textit{transport / subst} : \{A : \mathcal{U}\} \to (P : A \to \mathcal{U}) \to \{x \, y : A\} \to (x = y) \to P \, x \to P \, y$.
+
+Coercion: $\textit{coe / transport} : (A = B) \to A \to B$. We have $\textit{coe } p \, x = \textit{transport } (\lambda X. \, X) \, p \, x$ and $\textit{transport } b \, p \, \tilde{x} = \textit{coe } (\textit{ap } B \, p) \, \tilde{x}$.
+
+\subsection*{Homotopy levels}
+
+A type $A$ is \textbf{contractible} when it satisfies $\textit{isContr } A \, \hat{=} \, \Sigma(x : A).\sqcap(y : A).(x = y)$.
+
+The following types are contractible: $1$ and $\textit{singl } x$ (i.e. $\Sigma(y : A).(x = y)$) and $\neg \neg A$. The type \textit{Bool} is \textbf{not} contractible.
+
+Given a \textit{contractible} type $A$ and $x \, y : A$, we have that $x = y$ is \textit{contractible}.
+
+A type $A$ is a \textbf{proposition} when it satisfies $\textit{isProp } A \, \hat{=} \, (x \, y : A) \to (x = y)$.
+
+\textbf{Lemma}: Every \textit{contractible} type is a \textit{proposition}. Also, being \textit{contractible} is a \textit{proposition}, i.e. $\textit{IsProp }(\textit{IsContr } A)$.
+
+We also have that $\textit{isProp } A$ is equivalent to $A \to \textit{isContr } A$. In addition, $\textit{isProp } A$ implies $(x \, y : A) \to \textit{isContr }(x = y)$.
+
+The type of \textbf{propositions} is $\textit{HProp } \hat{=} \, \Sigma(A : \mathcal{U}). \textit{isProp } A$ (this is a subtype of $\, \mathcal{U}$).
+
+The following types are \textbf{not }propositions: \textit{Bool} and $\mathbb{N}$ and $S^n$.
+
+The following types are propositions: $0$ and $1$ and $\sqcap(x : A). B \, x$ and $\Sigma A. B$ with $A$ a proposition and $B \, x$ a proposition for every $x$ and $\neg\neg A$.
+
+Propositional truncation. The constructor: $|| - ||_{-1} : \mathcal{U} \to \mathcal{U}$. The introduction rules: $|-|_{-1}: A \to || A ||_{-1}$ and $\textit{pt}: \textit{isProp }(|| A ||_{-1})$. The recursor: $\textit{rec}: (B : \mathcal{U}) \to \textit{isProp } B \to (A \to B) \to || A ||_{-1} \to B$. We can define for $A$ and $B$ propositions: $A \vee B \, \hat{=} \, || A \sqcup B ||_{-1}$.
+
+A type $A$ is \textbf{connected} when it satisfies $(x \, y : A) \to || x = y ||_{-1}$.
+
+A type $A$ is a \textbf{set} when it satisfies $\textit{isSet } A \, \hat{=} \, (x \, y : A) \to \textit{isProp }(x = y)$.
+
+\textbf{Lemma}: any \textit{proposition} $A$ is a \textit{set}: $\textit{isProp } A \to \textit{isSet } A$. Alos, being a \textit{set} is a \textit{proposition}: $\textit{isProp }(\textit{isSet } A)$.
+
+The following types are \textit{sets}: $0$ and $1$ and \textit{Bool} and $\mathbb{N}$ and \textit{HProp}. The types $S^n, n > 0$ are \textbf{not }\textit{sets}.
+
+Let $A$ and $B$ \textit{sets}, $A \times B$, $A \sqcup B$, $A \to B$, $(x : A) \to B x$ and $\Sigma(x : A). B \, x$ are also \textit{sets}.
+
+A type $A$ is \textbf{decidable} when $A \sqcup \neg A$ holds. A type $A$ is \textbf{discrete} when it has decidable equality, i.e. $\forall (x \, y : A). \, x = y$ is decidable. A type $A$ is \textbf{stable} when $\neg \neg A \to A$. A type $A$ is \textbf{separated} when it has stable equality: $\forall (x \, y : A). \, x = y$ is stable.
+
+\textbf{Hedberg's theorem}: every \textit{discrete} type is a \textit{set}. Also, any \textit{decidable} type is \textit{stable}. In addition, any \textit{discrete} type is \textit{separated}.
+
+The following types are \textit{sets}: \textit{Bool}, $\mathbb{N}$, $\textit{Fin } n$.
+
+$|| A ||_0$ is for \textbf{set truncation}. Introduction rules, $|-|_0 : A \to || A ||_0$ and $\textit{st}: \textit{isSet }(|| A ||_0)$. Eliminator, $\textit{elim}: (B : ||A||_0 \to \mathcal{U}) \to ((x : A) \to \textit{isSet }(B \, |x|_0)) \to ((x : A) \to B \, |x|_0) \to (x : || A ||_0) \to B \, x$. Computation rule, $\textit{rec } B \, s \, f \, |a|_0 \, \hat{=} \, f \, a$.
+
+A \textbf{groupoid} is a type which has sets of paths $\textit{isGroupoid } A \, \hat{=} \, (x \, y : A) \to \textit{isSet }(x = y)$.
+
+\subsection*{Equivalences}
+
+A map $f : A \to B$ is an \textbf{isomorphism} when there exists $g : B \to A$ such that $g \circ f = \textit{id}_A$ and $f \circ g = \textit{id}_B$.
+
+A map $f : A \to B$ is \textbf{quasi-invertible} when there exists $g : B \to A$ such that $g \circ f \sim \textit{id}_A$ and $f \circ g \sim \textit{id}_B$.
+
+A map $f : A \to B$ is \textbf{bi-invertible} when there exists $g : B \to A$ and $g' : B \to A$ such that $g \circ f \sim \textit{id}_A$ and $f \circ g' \sim \textit{id}_B$.
+
+A \textbf{homotopy} $\alpha$ between two functions $f \, g : (x : A) \to B \, x$ is a function of type $(f \sim g) \, \hat{=} \, (x : A) \to f \, x \to g \, x$.
+
+\textit{Homotopy} is an equivalence relation: reflexivity $f \sim f$ and symmetry $f \sim g \to g \sim f$ and transitivity $f \sim g \to g \sim h \to f \sim h$.
+
+Given functions $f \, g : A \to B$, \textit{homotopy} $\alpha : f \sim g$ and equality $p : x = y$ in $A$, we have $\alpha \, x \cdot \textit{ap } g \, p = \textit{ap } f \, p \cdot \alpha \, y$.
+
+For a map $f : A \to B$, a \textbf{quasi-inverse} is $g : B \to A$ such that $g \circ f \sim \textit{id}_A$ and $f \circ g \sim \textit{id}_B$. We write $\textit{hasQInv(f) } \hat{=} \, \Sigma(g : B \to A).(g \circ f \sim \textit{id}_A) \times (f \circ g \sim \textit{id}_B)$.
+
+A \textbf{half-adjoint equivalence} is a map $f : A \to B$ such that there exists $g : B \to A$, $\eta : g \circ f \sim \textit{id}_A$, $\epsilon : f \circ g \sim \textit{id}_B$ and $f \, \eta \sim \epsilon \, f$.
+
+A map $f : A \to B$ is a \textbf{bi-invertible equivalence} where there are $g : B \to A$ ands $h : B \to A$ such that $g \circ f \sim \textit{id}_A$ and $f \circ h \sim \textit{id}_B$. We write $\textit{isEquiv(f) } \hat{=} \, \Sigma(g : B \to A).(g \circ f \sim \textit{id}_A) \times \Sigma(h : B \to A).(f \circ h \sim \textit{id}_B)$.
+
+\textbf{Theorem}: being a \textit{bi-invertible equivalence} is a \textit{proposition}: $\textit{isProp }(\textit{isEquiv }(f))$. Also, $\textit{hasQInv }(f)$ is equivalent to $\textit{isEquiv }(f)$.
+
+We have $A \simeq A$ and $A \simeq B \to B \simeq A$ and $A \simeq B \wedge B \simeq C \to A \simeq C$. Also, if $A \simeq A'$ and $B \simeq B'$ then $A \times B \simeq A' \times B'$.
+
+\textbf{Lemma}: $\textit{isContr }(A) \simeq (A \simeq 1)$. In addition, coproduct and product satisfy the expected equivalences.
+
+We have $(X \to A \times B) \simeq (X \to A) \times (X \to B)$ and $(A \sqcup B  \to X) \simeq (A \to X) \times (B \to X)$.
+
+\subsection*{Univalence}
+
+\textbf{Lemma}: $\textit{idtoequiv} : (A = B) \to (A \simeq B)$. In addition, $\textit{idtoequiv }(p) \, \hat{=} \, (\textit{coe}(p), \, \textit{eq}(p))$. \textbf{Axiom}: $\textit{isEquiv }(\textit{idtoequiv})$.
+
+Elimination: $\textit{idtoequiv} : (A = B) \to (A \simeq B)$. Introduction: $\textit{ua} : (A \simeq B) \to (A = B)$. Computation: $\textit{coe }(\textit{ua } f) \, x = f \, x$. Uniqueness: $\textit{ua }(\textit{coe } p) = p$ with $p : A = B$.
+
+\textbf{Lemma}: the \textit{universe} is not a \textit{set}. Proof: $\textit{true} = \textit{coe } p \textit{ false} = \textit{coe } \textit{refl } \textit{false} = \textit{false} \to \textit{contradiction}$.
+
+\textbf{Lemma}: \textit{decidable} \textit{propositions} are booleans.
+
+\subsection*{Function extensionality}
+
+Given $f \, g : A \to B$, we have a canonical map $\textit{happly} : (f = g) \to (x : A) \to f \, x = g \, x$ defined by path induction $\textit{happly } \textit{refl } \hat{=} \, \lambda x. \textit{ refl}$.
+
+We can prove also its inverse $\textit{funext} : ((x : A) \to f \, x = g \, x) \to f = g$.
+
+Elimination: $\textit{happly} : (f = g) \to (f \sim g)$. Introduction: $\textit{funext} : (f \sim g) \to (f = g)$. Computation: $\textit{happly } (\textit{funext } \alpha) \, x = \alpha \, x$ with $\alpha : f \sim g$ and $x : A$. Uniqueness: $\textit{funext } (\lambda x. \, \textit{happly } p \, x) = p$ with $p : f = h$.
+
+\textbf{Theorem}: we have \textbf{function extensionality}, i.e. an equivalence $\textit{funext} : ((x : A) \to f \, x = g \, x) \simeq (f = g) : \textit{happly}$ for $f \, g : (x : A) \to B \, x$.
+
+\textbf{Weak function extensionality}: $((x : A) \to \textit{isContr}(B \, x)) \to \textit{isContr}((x : A) \to B \, x)$ for $A : \mathcal{U}$ and $B : A \to \mathcal{U}$.
+
+\subsection*{More equivalences}
+
+A \textbf{half-adoint equivalence} is a map $f : A \to B$ such that there exists $\textit{isHAE}(f) \, \hat{=} \, \Sigma(g : B \to A).\Sigma(\eta : g \circ f \sim \textit{id}).\Sigma(\epsilon : f \circ g \textit{id}). f \, \eta \sim \epsilon \, f$.
+
+A \textbf{half-adjoint equivalent} consists of functions $f : A \to B$, $g : B \to A$ and homotopies $\eta : g \circ f \sim \textit{id}_A$, $\epsilon : f \circ g \sim \textit{id}_B$ and $\tau : f \, \eta \sim \epsilon \, f$.
+
+Given a map $f : A \to B$ and $y : B$, the \textbf{fiber} of $f$ at $y$ is $\textit{fib } f \, y \, \hat{=} \, \Sigma(x : A).(f \, x = y)$.
+
+A map $f : A \to B$ \textbf{has contractible fibers} when $\textit{hasCFib}(f) \, \hat{=} \, (y : B) \to \textit{isContr}(\textit{fib } f y)$.
+
+\textbf{Theorem}: $\textit{hasQInv}(f) \to \textit{isHAE}(f)$ and $\textit{isHAE}(f) \to \textit{hasCFib}(f)$ and $\textit{hasCFib}(f) \to \textit{hasQInv}(f)$.
+
+For a map $f : A \to B$, being an \textit{equivalence} is a \textit{proposition} and for an \textit{equivalence} having a left (or right) inverse is a \textit{proposition}.
+
+Given $e \, e' : A \simeq B$, we have $e = e' \iff f = f'$ with $f \, f' : A \to B$ their underlying functions.
+
+A map $f : A \to B$ is a \textbf{surjection} when $(y : B) \to || \textit{fib } f \, y ||_{-1}$ and is an \textbf{embedding} when $(y : B) \to \textit{isProp }(\textit{fib } f \, y)$.
+
+A map $f : A \to B$ is an \textit{equivalence} $\iff$ is both a \textit{surjection} and an \textit{embedding}. In addition, a map is an \textit{embedding} $\iff$ the induced map $\textit{ap } f : (x = y) \to (f \, x = f \, y)$ is an \textit{equivalence} for every $x \, y : A$.
+
+A morphism $f : A \to B$ is \textbf{split surjection} when it satisfies $\sqcap (y : B). \Sigma(x : A). f \, x = y$. This is equivalent to $\Sigma(g : B \to A).\sqcap(y : B). f \, (g \, y) = y$.
+
+A map $f : A \to B$ is \textbf{injective} when it satisfies $(x \, y : A) \to (f \, x = f \, y) \to (x = y)$.
+
+\subsection*{The circle}
+
+The non-dependent rules: Type formation: $S^1$. Introduction: $\star : S^1$ and Loop: $\star = \star$. Recursion: $\textit{rec} : (A : \mathcal{U}) \to (a : A) \to (a = a) \to S^1 \to A$. Computation: $\textit{rec } A \, a \, p \, \hat{=} \, a$ and $\textit{ap } (\textit{rec } A \, a \, p) \, \textit{loop } \hat{=} \, p$. Uniqueness: $\textit{rec } S^1 \, \star \, \textit{loop } x = x$.
+
+The depent rules: Type formation: $S^1$. Introduction: $\star : S^1$ and $\textit{loop} : \star = \star$. Elimination: $\textit{elim} : (P : S^1 \to \mathcal{U}) \to (b : P \, \star) \to (\textit{transport } P \textit{ loop } b = b) \to (x : S^1) \to P \, x$. Computation: the function $f \, \hat{=} \, \textit{elim } P \, b \, p \, \star : S^1 \to S^1$ satisfies $f \star \, \hat{=} \, b$ and $\textit{apd } f \textit{ loop } \hat{=} \, p$. Uniqueness: for $f : (x : S^1) \to P \, x$, we have $f \, x = \textit{elim } P \, (f \, \star) \, (\textit{ap } f \textit{ loop}) \, x$.
+
+\textbf{Lemma}: given a type $A$, we have $S^1 \to A \simeq \Sigma(x : A).(x = x)$.
+
+The circle is \textbf{not} a \textit{set}. In $S^1$ we have $\textit{loop} \bm{\neq} \textit{refl}$.
+
+\textbf{Theorem}: given $x \, x' : A$ and $y \, y' : B$, we have $((x, \, y) =^{A \times B} (x', \, y')) = ((x =^A x') \times (y =^B y'))$. Proof: equivalence by univalence.
+
+\textbf{Theorem}: given $x \, y : A \sqcup B$, we have $(x =^{A \sqcup B} y) = \textit{Code } x \, y$, with $\textit{Code} : A \sqcup B \to A \sqcup B \to \mathcal{U}$ defined as $(\textit{inl } a) \, (\textit{inl } a') \mapsto a = a', (\textit{inr } b) \, (\textit{inr } b') \mapsto b = b', \textit{otherwise} \mapsto \bot$.
+
+A \textbf{pointed type} is a pair $(A, \, \star)$ consisting of a type $A$ and an element $\star: A$. Given a \textit{pointed type} $A$, its \textbf{loop space} is $\Omega A \, \hat{=} \, (\star = \star)$.
+
+Given a \textit{pointed type} $A$, its \textbf{fundamental group} is the \textit{set} $\pi_1(A) \, \hat{=} \, || \Omega A ||_0$ equipped with the canonical group structure induced by operations on paths, that is a neutral element $|\textit{refl}|_0$, an inverse $\textit{elim } (\lambda p. \, |p^-|_0) \, p$ and a composition induced by path composition.
+
+Fact: $\pi_1 \, S^2 \, \hat{=} \, || \Omega S^2 ||_0 = 1$ but $\Omega S^2 \bm{\neq} 1$. \textbf{Theorem}: $\Omega S^1 = \mathbb{Z}$.
+
+By \textit{univalence}, $\mathbb{Z} \simeq \Omega S^1$ with $f : \mathbb{Z} \to \Omega S^1$ defined by $n \mapsto \textit{loop}^n$ and $g : \Omega S^1 \to \mathbb{Z} \text{ on } p : \star = \star$ defined by $g \, p \, \hat{=} \, \textit{coe } (\textit{ap } \textit{Code } p) \, 0$ with here $\textit{Code} : S^1 \to \mathcal{U}$ defined by $\star \mapsto \mathbb{Z}$ and $\textit{loop} \mapsto \textit{ua suc}$.
+
+We can defined $\textit{encode} : (x : S^1) \to (\star = x) \to \textit{Code } x$ by $\textit{encode } x \textit{ refl } \hat{=} \, 0$, also as $\textit{decode} : (x : S^1) \to \textit{Code } x \to (\star = x)$.
+
+Hence, we have $\textit{decode } x (\textit{encode } x \, p) = p$ and $\textit{encode } x \, (\textit{decode } x \, n) = n$. \textbf{Theorem}: we have a group isomorphism $\pi_1 S^1 \simeq \mathbb{Z}$.
+
+\subsection*{The fundamental duality}
+
+Any function $f : A \to B$ induces a \textbf{fiber} function $\textit{fib } f : B \to \mathcal{U}$ defined by $\textit{fib } f \, y \, \hat{=} \, \Sigma(x : A).(f \, x = y)$.
+
+Any type family $P : B \to \mathcal{U}$ induces a map $\textit{total } P : (\Sigma(y : B). P \, y) \to B$ which is the first proj from the \textbf{total space} of the family.
+
+\textbf{Lemma}: for a type family $P : B \to \mathcal{U}$, the fiber of the first projection $\textit{total } P : \Sigma B. P \to B$ at $y : B$ is $P \, y$.
+
+\textbf{Lemma}: suppose given a family $P : A \to \mathcal{U}$ of propositions. Then the projection $\textit{fst} : \Sigma A. P \to A$ is an embedding.
+
+\textbf{Lemma}: for a function $f : A \to B$, we have $\Sigma (y : B). \textit{ fib } f \, y = A$.
+
+\textbf{Theorem}: we have an equivalence $\Sigma(A : \mathcal{U}).(A \to B) \simeq B \to \mathcal{U}$ between fibrations over $B$ and families indexed by $B$.
+
+\textbf{Lemma}: for $F : (y : B) \to P \, y \to Q \, y$, $y : B$, and $x : Q \, y$, we have $\textit{fib } (\textit{total } F) \, (y, \, x) = \textit{fib } (F \, y)$.
+
+\textbf{Theorem}: The morphism $F$ is a family of \textit{equivalences} $\iff$ $\textit{total } F$ is an \textit{equivalence}.
+
+\textbf{Theorem}: A map $f : A \to B$ is an \textit{embedding} $\iff$ $\textit{fib } f \, x$ is a \textit{proposition} for every $x : A$.
+
+\subsection*{Cubical type theory}
+
+New type $I$ for the \textbf{interval} with two constructors: $i_0 : I$ and $i_1 : I$. A path in $A$ is now a function $I \to A$.
+
+A term $I \to I \to A$ corresponds to a square in $A$, a term $I \to I \to I \to A$ to a cube in $A$, etc.
+
+The type of \textit{heterogeneous} path is $\textit{PathP} : (A : I \to \mathcal{U}) \to A \, i_0 \to A \, i_1 \to \mathcal{U}$. Given $p : \textit{PathP } A \, x \, y$ and $i : I$, we have $p \, i : A \, i$ and $p \, i_0 \, \hat{=} \, x$ and $p \, i_1 \, \hat{=} \, y$.
+
+The type of \textbf{paths} in $A$ is ($x = y) \, \hat{=} \, \textit{PathP } (\_ \mapsto A) \, x \, y$. We define \textbf{reflexivity paths} by $\textit{refl} : (A : \mathcal{U}) \, (x : A) \to x = x$ by $A \, x \, i \mapsto x$.
+
+We define $\textit{ap / cong} : (f : A \to B) \, (p : x = y) \to f \, x \to f \, y$ by $f \, p \, i \mapsto f \, (p \, i)$.
+
+\textbf{Function extensionality} is proved by $\textit{funext} : (f \, g : A \to B) \, (p : (x : A) \to f \, x = g \, x) \to f = g$ by $f \, g \, p \, i \, x \mapsto p \, x \, i$.
+
+A primitive notion $\textit{transp} : (A : I \to \mathcal{U}) \to I \to A \, i_0 \to A \, i_1$. We can define $\textit{transport} : (A = B) \to A \to B$ by $p \, a \mapsto \textit{transp } (\lambda i. \, p \, i) \, i_0 \, a$.
+
+We have operations supremum $\vee$, infimum $\wedge$ and complete $\sim$ on elements of $I$. They satisfy definionnaly all the laws of De Morgan algebras (with $i_0$ for \textit{false} and $i_1$ for \textit{true}) \textbf{expecting} $i \, \vee \sim i \, \hat{=} \, i_1$ and $i \, \wedge \sim i \, \hat{=} \, i_0$. For example, $(i \, \vee i_1) \, \hat{=} \, i_1$ works.
+
+We have $sym : (x = y) \to (y = x)$ defined by $p \, i \mapsto p \, (\sim i)$.
+
+$J : (r : P \, x \, \textit{refl}) \, \{ y : A \} \, (p : x = y) \to P \, y \, p$ can be defined as $r \, p \mapsto \textit{transport } (\lambda j. \, P \, (p \, j) \, (\lambda i. \, p \, (i \, \wedge j))) \, r$.
+
+We have a composition operation $\textit{comp} : (p : x = y) \to (q : y = z) \to x = z$ defined by $\textit{comp } p \, q \, \hat{=} \, J \, (\lambda y \, q. \, y = z \to x = z) \, (\lambda q. \, q) \, p \, q$.
+
+A new type $\textit{Partial } \varphi \, A$ corresponding to an element of type $A$ which is only defined when $\varphi$ is $i_1$, which can be thought of as a cube with missing faces.
+
+\textbf{Homogeneous composition} operation is $\textit{hcomp} : \{ \varphi : I \} \, (u : I \to \textit{Partial } \varphi \, A) \, (u_0 : A) \to A$.
+
+Let $u : (i : I) \, (j : I) \to \textit{Partial } (\sim i \, \vee i) \, A$ such that $i_0 \, j \mapsto x$ and $i_1 \, j \mapsto q \, j$, we can define \textbf{paths composition} by $p \cdot q \, \hat{=} \, \lambda i. \, \textit{hcomp } (u \, i) \, (p \, i)$.
+
+We write $A[\varphi \mapsto u]$ for the \textbf{subtype} of $A$ whose elements are definitionnaly equal to $u$ when $\varphi$ is $i_1$. It comes equipped with two operations $\textit{inS} : (u : A) \to A[\varphi \mapsto \lambda i. \, u]$ and $\textit{outS} : A[\varphi \mapsto u] \to A$.
+
+The \textbf{homogeneous filler} is $\textit{hfill} : \{ \varphi : I \} \, (u : (i : I) \to \textit{Partial } \varphi \, A) \, (u_0 : A[\varphi \mapsto u \, i_0]) \, (i : I) \to A$ which is $u_0$ when $i$ is $i_0$ and $\textit{hcomp } u \, u_0$ when $i$ is $i_1$. It can be defined by $u \, u_0 \, i \mapsto \textit{hcomp } (j \, (i = i_0) \mapsto \textit{outS } u_0) \, (\textit{outS } u_0)$.
+
+Composition is unital on the right. We obtain $f : p = p \cdot \textit{refl}$ defined by $j \, i \mapsto \textit{hfill } (u \, i) \, (\textit{inS } (p \, i)) \, j$.
+
+Composition is unital on the left. We obtain $f : (i : I) \, (j : I) \, (k : I) \to A$ defined by $i \, j \, k \mapsto \textit{hfill } (\lambda j. \, u \, i \, j \, k) \, (\textit{inS } (u_0 \, i \, k))$.
+
+We can also show that composition is cancellative on the right.
+
+\subsection*{Higher inductive types}
+
+An \textbf{inductive type} $A$ is the smallest type closed under some formal operations.
+
+The \textbf{interval} $I$ is generated by $\star_l : I$, $\star_r : I$ and $p : \star_l = \star_r$.
+
+The elimination principal is $\textit{elim} : (P : I \to \mathcal{U}) \to (a : P \, \star_l) \to (b : P \star_r) \to (q : \textit{transport } P \, a \, p = b) \to (x : I) \to P \, x$.
+
+One can show $I = 1$.
+
+The \textbf{line} $L$ is generated by points $n : L$ for $n : \mathbb{N}$ and paths $p_n : n = \textit{suc } n$ for $n : \mathbb{N}$.
+
+The elimination principal is $\textit{elim} : (P : L \to \mathcal{U}) \to (a : (n : \mathbb{N}) \to P \, n) \to (q : (n : \mathbb{N}) \to \textit{transport } P \, p_n \, a = a \, (\textit{suc } n)) \to (n : \mathbb{N}) \to P \, n$.
+
+The \textbf{circle} $S^1$ is generated by $\star : S^1$ and $\textit{loop} : \star = \star$.
+
+The elimination principal is $\textit{elim} : (P : S^1 \to \mathcal{U}) \to (b : P \, \star) \to (p : \textit{transport } P \textit{loop } b = b) \to (x : S^1) \to P \, x$.
+
+The \textbf{hollow square} is generated by points $a, \, b, \, c, \, d$ and paths $a = b, \, b = c, \, b = q, \, c = d$. It can be shown to be equivalent to $S^1$.
+
+The \textbf{square} is generated by points $a, \, b, \, c, \, d$ and paths $p : a = b, \, q : b = c, \, r : b = q, \, s : c = d$ and a path $\alpha : p \cdot r = q \cdot s$. It can be shown to be contractible.
+
+The \textbf{Torus} $T$ is generated by a point $\star$, paths $p : \star = \star, \, q : \star = \star$ and a square $\alpha : p \cdot q = q \cdot p$. \textbf{Lemma}: the torus is equivalent to $S^1 \times S^1$.
+
+The \textbf{coequalizer} of two morphisms consists of an object $C$ and a morphism $q : B \to C$ such that $q \circ f = q \circ g$.
+
+The \textbf{pushout} of $f : A \to B$ and $g : A \to C$ is generated by $\textit{inl} : B \to \textit{pushout } f \, g$, $\textit{inr} : C \to \textit{pushout } f \, g$ and $e : (x : A) \to \textit{inl } (f \, x) = \textit{inr } (g \, x)$.
+
+The \textbf{suspension} $\Sigma A$ of $A$ is the pushout of the terminal map $f : A \to 1$ with itself. It is generated by $N : \Sigma A$, $S : \Sigma A$ and $e : A \to N = S$.
+
+Given $n : \mathbb{N}$, we define the $n$-\textbf{spheres} $S^n$ by $S^{n+1} \, \hat{=} \, \Sigma S^n$ and $S^{-1} \, \hat{=} \, 0$.
+
+The \textbf{pullback} of two maps $f : A \to C$ and $g : B \to C$ consists of an object $A \times_C B$ together with maps $\textit{fst} : A \times_C B \to A$ and $\textit{snd} : A \times_C B \to B$ such that $f \circ \textit{fst} = g \circ \textit{snd}$. In HoTT, the \textit{pullback} is $A \times_C B = \Sigma (a : A). \Sigma (b : B). \, a = b$.
+
+\textbf{Theorem}: given a type family $P : B \to \mathcal{U}$, the associated fibration $f : A \to B$ under Grothendieck duality is the \textit{pullback}.
 
 \end{document}
