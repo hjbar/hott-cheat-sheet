@@ -9,7 +9,7 @@ jobs:
     - name: Install packages
       run: |
         sudo apt-get -y update
-        sudo apt-get -y install texlive
+        sudo apt-get -y install texlive texlive-latex-extra
     - name: Build
       run: |
         make
