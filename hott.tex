@@ -42,10 +42,6 @@ Given points $x,y:A$ and paths $p,q: x=y$, we can consider the type $p=q$ whose 
 
 Symmetry: $p^-(t) \, \hat{=} \, p(1 - t)$, defined as $sym : (x : A) \to (y : A) \to (x = y) \to (y = x)$ is the function $x \mapsto J \, A \, x \, (\lambda y \, p. \, y = x) \textit{ refl}$.
 
-Transitivity: $p \cdot q$, defined as $trans : (x \, y \, z : A) \to (x = y) \to (y = z) \to (x = z)$ is the function $\textit{refl } \textit{refl } \mapsto \textit{refl}$.
-
-We also have that: $p \cdot \textit{refl } \hat{=} \, p$ and $\textit{refl} \cdot p \, \hat{=} \, p$ and $\textit{refl} \cdot \textit{refl } \hat{=} \textit{ refl}$ and $(p \cdot q) \cdot r = p \cdot (q \cdot r)$ and $p \cdot p^- = \textit{refl}$ and $p^- \cdot p = \textit{refl}$ and $(p \cdot q)^- = q^- \cdot p^-$ and $(p^-)^- = p$.
-
 Dependent congruence: $\textit{apd / cong} : \{A : \mathcal{U}\} \, \{B : A \to \mathcal{U}\} \to (f : (x : A) \to B \, x) \to \{x \, y : A\} \to (p : x = y) \to (f \, x = f \, y)$.
 
 Subsitutivity: $\textit{transport / subst} : \{A : \mathcal{U}\} \to (P : A \to \mathcal{U}) \to \{x \, y : A\} \to (x = y) \to P \, x \to P \, y$.
